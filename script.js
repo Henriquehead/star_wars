@@ -7,6 +7,16 @@ window.onload = async () => {   // Ativa a função toda vez que a pg é carrega
         console.log(error);
         alert("erro ao carregar partes")
     }
+
+    
+    //Função dos botões 
+    const nextButon = document.getElementById('next-button');
+    const backButon = document.getElementById('back-button');
+
+
+    //Monitorar eventos
+    nextButon.addEventListener('click', loadNextPage());
+    backButon.addEventListener('click', loadPreviousPage());
 }
 
 async function loadCharacters(url) {
@@ -23,6 +33,8 @@ async function loadCharacters(url) {
             card.style.backgroundImage =
             `url("https://starwars-visualguide.com/assets/img/characters/${character.url.replace( /\D/g, "")}.jpg")`; 
             //Expressão regurar usando método replace removento todos os caracteres e deixando só o id vazio
+            //REVISAO
+
             card.className = 'cards' //Cria o nome da classe na div criada na variável "card"
 
             const characterNameBg = document.createElement("div"); // Cria a div que contem o nome dos personagens
@@ -38,12 +50,55 @@ async function loadCharacters(url) {
             mainContent.appendChild(card); //Coloca a div "card" dentro da div "mainContent"
             
         })
+
         
-        currentPageUrl = url
+    //Função dos botões 
+    const nextButon = document.getElementById('next-button');
+    const backButon = document.getElementById('back-button');
+
+    //Verificações
+    nextButon.disabled = !responseJson.next
+    backButon.disabled = !responseJson.previous
+        
+    //Visibilidade dos botões 
+    backButon.style.visibility = responseJson.previous?"visible":"hidden";
+
+    currentPageUrl = url  //Atualiza a página atual
 
 
     }catch(error) {
         alert("Erro ao carregar os cards");
         console.log(error)
     }
+}
+
+async function loadNextPage () { 
+    if(!currentPageUrl) return; // Finalizar execução caso a api não apresentar resultado
+    
+  }try {   //Requisição
+        const response = await fetch(currentPageUrl);
+        const responseJson = await response.json(); //Tranforma em arquivo json
+
+        await loadCharacters(responseJson.next);
+    
+
+    }catch(error) {
+        alert("Erro ao carregar a proxima página");
+    }
+    
+
+    async function loadPreviousPage () { 
+        if(!currentPageUrl) return; // Finalizar execução caso a api não apresentar resultado
+        
+        try {   //Requisição
+            const response = await fetch(currentPageUrl);
+            const responseJson = await response.json(); //Tranforma em arquivo json
+    
+            await loadCharacters(responseJson.previous);
+    
+    
+        }catch(error) {
+            alert("Erro ao carregar a página anterior");
+        }
+
 }
