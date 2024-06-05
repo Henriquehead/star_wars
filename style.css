@@ -19,7 +19,7 @@ a {
 }
 
 header {
-    height: 70px;
+    height: 170px;
     display: flex;
     align-items: center;
     justify-content: space-around;
@@ -69,13 +69,14 @@ h2 {
 }
 
 .main-content {
-    width: 90%;
+    width: 95%;
     display: flex;
     justify-content: center;
     flex-wrap: wrap;    /* Ajusta os cards para baixo */
     column-gap: 20px;
     row-gap: 10px;
     padding: 0 20px;
+    margin-top: 50px;
 }
 
 .cards {
@@ -111,6 +112,55 @@ h2 {
     font-size: 1rem;
 }
 
+.buttons {
+    width: 60%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+button {
+    width: 70px;
+    height: 25px;
+    background-color: gold;
+    color: #000;
+    font-weight: 700;
+    border-radius: 3px;
+    cursor: pointer;
+    border: 1px solid #000;
+    outline: none;
+    transition: 0.6s;
+    font-size: 10px;
+}
+
+button:hover {
+    background-color: #000;
+    color: gold;
+}
+
+#back-button {
+    visibility: hidden;
+}
+
+footer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 10px;
+    margin: 40px 0 70px 0;
+}
+
+.footer-logo {
+    font-size: 1.5rem;
+    font-weight: 500;
+}
+
+.copyright {
+    font-weight: 500;
+    font-family: 'Courier New', Courier, monospace;
+}
 
 
 
