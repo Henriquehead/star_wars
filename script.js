@@ -15,8 +15,8 @@ window.onload = async () => {   // Ativa a função toda vez que a pg é carrega
 
 
     //Monitorar eventos
-    nextButon.addEventListener('click', loadNextPage());
-    backButon.addEventListener('click', loadPreviousPage());
+    nextButon.addEventListener('click', loadNextPage);
+    backButon.addEventListener('click', loadPreviousPage);
 }
 
 async function loadCharacters(url) {
