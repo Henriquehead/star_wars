@@ -1,104 +1,182 @@
-let currentPageUrl = 'https://swapi.dev/api/people/';
+let currentPageUrl = 'https://swapi.dev/api/people/'
 
-window.onload = async () => {   // Ativa a função toda vez que a pg é carregada
+window.onload = async () => {
     try {
-        await loadCharacters(currentPageUrl);
-    }catch (error) {
+        await loadCharacters(currentPageUrl)
+    }catch(error) {
         console.log(error);
-        alert("erro ao carregar partes")
+        alert("Error ao carregar cards");
     }
 
-    
-    //Função dos botões 
-    const nextButon = document.getElementById('next-button');
-    const backButon = document.getElementById('back-button');
+               //Mapeia os botoes e coloca em variaveis
+    const nextButton = document.getElementById("next-button");
+    const backButton = document.getElementById("back-button");
 
+        //Monitora os eventos nos botoes
+    nextButton.addEventListener('click', loadNextPage);
+    backButton.addEventListener('click', loadPreviousPage);
 
-    //Monitorar eventos
-    nextButon.addEventListener('click', loadNextPage);
-    backButon.addEventListener('click', loadPreviousPage);
 }
 
 async function loadCharacters(url) {
-    const mainContent = document.getElementById("main-content");  //Mapeia a div principal na var 
-    mainContent.innerHTML = ""; //Limpa os resultados anteriores
+    const mainContent  = document.getElementById('main-content');
+    mainContent.innerHTML = ''; //Limpa os resultados anteriores
 
     try {
 
-        const response = await fetch(url);  //Requisição feita à url = "currentPageHtml"
-        const responseJson = await response.json(); // Transforma os objetos da requisição em arquivo "Json"
+        const response = await fetch(url); //Armazena o resultado da requisição
+        const responseJson = await response.json();
 
-        responseJson.results.forEach((character) => {  //Itera com a chave "results" de cada personagem
-            const card = document.createElement("div"); //Constrói a div dos cards na variável "cards"
-            card.style.backgroundImage =
-            `url("https://starwars-visualguide.com/assets/img/characters/${character.url.replace( /\D/g, "")}.jpg")`; 
-            //Expressão regurar usando método replace removento todos os caracteres e deixando só o id vazio
-            //REVISAO
+        responseJson.results.forEach((character) => {  //Reconstroi a div "cards" no html
+            const card = document.createElement('div');
+            card.style.backgroundImage = `url('https://starwars-visualguide.com/assets/img/characters/${character.url.replace(/\D/g, "")}.jpg')`//Cria um background
+            card.className ='cards'; //Cria uma classe
 
-            card.className = 'cards' //Cria o nome da classe na div criada na variável "card"
+            const characterNameBg = document.createElement('div');//Reconstroi a div "character-name-bg" no html
+            characterNameBg.className = 'character-name-bg'; //Cria uma classe
 
-            const characterNameBg = document.createElement("div"); // Cria a div que contem o nome dos personagens
-            characterNameBg.className = "character-name-bg"; // Dá o nome da classe à div
+            const characterName = document.createElement('span') //Reconstroi o span "character-name" no html
+            characterName.className= 'character-name' //Cria uma classe
+            characterName.innerText = `${character.name}`;  // Troca o nome do personagem de forma dinamica
 
-            const characterName = document.createElement("span"); //Cria um span na div
-            characterName.className = "character-name"; //Cria uma classe
-            characterName.innerText = `${character.name}`; //Pega o nome de cada personagem
+            //Colocando os elementos nos lugares de acordo com a herança no dom
+            characterNameBg.appendChild(characterName);
+            card.appendChild(characterNameBg);
 
-            characterNameBg.appendChild(characterName); //Anexa um "filho" na div "characterNameBg"
-            card.appendChild(characterNameBg); //Coloca a div "charcterNameBg" dentro da div card"
+            card.onclick = () => {
+                const modal = document.getElementById("modal");
+                modal.style.visibility = "visible";
 
-            mainContent.appendChild(card); //Coloca a div "card" dentro da div "mainContent"
+                const modalContent = document.getElementById("modal-content");
+                modalContent.innerHTML = "";
+
+                const characterImage = document.createElement("div");
+                characterImage.style.backgroundImage = `url('https://starwars-visualguide.com/assets/img/characters/${character.url.replace(/\D/g, "")}.jpg')`;
+                characterImage.className = "character-image";
+
+                const name = document.createElement('span');
+                name.className = "character-details";
+                name.innerText = `Nome: ${character.name}`;
+
+                const characterHeight = document.createElement('span');
+                characterHeight.className = "character-details";
+                characterHeight.innerText = `Altura: ${convertHeight(character.height)}`;
+
+                const mass = document.createElement('span');
+                mass.className = "character-details";
+                mass.innerText = `Peso: ${convertMass(character.mass)}`;
+
+                const eyeColor = document.createElement('span');
+                eyeColor.className = "character-details";
+                eyeColor.innerText = `Cor dos olhos: ${convertEyeColor(character.eye_color)}`;
+
+                const birthYear = document.createElement('span');
+                birthYear.className = "character-details";
+                birthYear.innerText = `Nascimento: ${convertBirthYear(character.birth_year)}`;
+
+                modalContent.appendChild(characterImage);
+                modalContent.appendChild(name);
+                modalContent.appendChild(characterHeight);
+                modalContent.appendChild(mass);
+                modalContent.appendChild(eyeColor);
+                modalContent.appendChild(birthYear);
+            }
+            const mainContent = document.getElementById('main-content');
+            mainContent.appendChild(card);
             
-        })
+        });
 
-        
-    //Função dos botões 
-    const nextButon = document.getElementById('next-button');
-    const backButon = document.getElementById('back-button');
+              //Mapeia os botoes e coloca em variaveis
+        const nextButton = document.getElementById("next-button");
+        const backButton = document.getElementById("back-button");
 
-    //Verificações
-    nextButon.disabled = !responseJson.next
-    backButon.disabled = !responseJson.previous
-        
-    //Visibilidade dos botões 
-    backButon.style.visibility = responseJson.previous?"visible":"hidden";
+        //Verificaçao dos botoes quando existir ou não paginas anteriores e proximas
+        nextButton.disabled = !responseJson.next; 
+        backButton.disabled = !responseJson.previous;
 
-    currentPageUrl = url  //Atualiza a página atual
+        backButton.style.visibility = responseJson.previous ? "visible" : "hidden";
+        nextButton.style.visibility = responseJson.next ? "visible" : "hidden";
+       
 
+        currentPageUrl = url;  //Troca de valor da variavel
+     
 
     }catch(error) {
-        alert("Erro ao carregar os cards");
-        console.log(error)
+        console.log('falha');
+        alert("Erro ao carregar os personagens");      
     }
 }
 
-async function loadNextPage () { 
-    if(!currentPageUrl) return; // Finalizar execução caso a api não apresentar resultado
-    
-  }try {   //Requisição
+function hideModal () {
+    const modal = document.getElementById('modal');
+    modal.style.visibility = "hidden"; 
+}
+
+async function loadNextPage() {
+    if(!currentPageUrl) return; //Previne algum erro se a pg não for carregada
+
+    try {
         const response = await fetch(currentPageUrl);
-        const responseJson = await response.json(); //Tranforma em arquivo json
+        const responseJson = await response.json();
 
-        await loadCharacters(responseJson.next);
-    
+        await loadCharacters(responseJson.next)
 
     }catch(error) {
-        alert("Erro ao carregar a proxima página");
+        console.log(error);
+        alert("Falha ao carregar a proxima página")
     }
-    
-
-    async function loadPreviousPage () { 
-        if(!currentPageUrl) return; // Finalizar execução caso a api não apresentar resultado
-        
-        try {   //Requisição
-            const response = await fetch(currentPageUrl);
-            const responseJson = await response.json(); //Tranforma em arquivo json
-    
-            await loadCharacters(responseJson.previous);
-    
-    
-        }catch(error) {
-            alert("Erro ao carregar a página anterior");
-        }
-
 }
+
+async function loadPreviousPage() {
+    if(!currentPageUrl) return; //Previne algum erro se a pg não for carregada
+
+    try {
+        const response = await fetch(currentPageUrl);
+        const responseJson = await response.json();
+
+        await loadCharacters(responseJson.previous)
+
+    }catch(error) {
+        console.log(error);
+        alert("Falha ao carregar página anterior")
+    }
+}
+
+function convertEyeColor(eyeColor) {
+    const cores = {
+        blue: "azul",
+        brown: "castanho",
+        green: "verde",
+        yellow: "amarelo",
+        black: "preto",
+        pink: "rosa",
+        red: "vermelho",
+        orange: "laranja",
+        hazel: "avela",
+        unknow: "desconhecida"
+    };
+    return cores[eyeColor.toLowerCase()] || eyeColor;
+}
+
+function convertHeight(height) {
+    if(height === "unknown") {
+        return "desconhecida";
+    }
+
+    return (height / 100).toFixed(2)
+}
+
+function convertMass(mass) {
+    if(mass === "unknown") {
+        return "desconhecido";
+    }
+    return`${mass}Kg`
+}
+
+function convertBirthYear(birthYear) {
+    if(birthYear === "unknown") {
+        return "desconhecido";
+    }
+    return birthYear
+}
+
