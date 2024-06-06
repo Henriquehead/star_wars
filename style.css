@@ -247,13 +247,10 @@ footer {
 
 @media (max-width:480px) {
     .modal-content {
-        width: 44vw;
-        height: 50vh;
+        width: 55vw;
+        height: 60vh;
     } 
-    .character-details {
-        font-size: 0.5rem;
-    }    
-
+    
     .cards {
         width: 230px;
         height: 470px;
@@ -266,9 +263,7 @@ footer {
     }
     .copyright {
         font-size: 0.6rem;
-    }
- 
-  
+    } 
 }
 
 
